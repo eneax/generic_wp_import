@@ -1,6 +1,7 @@
 {
   "name": "wp-import",
   "version": "1.0.0",
+  "description": "Import WordPress data into GraphCMS",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
@@ -23,9 +24,9 @@
     "yarn": "^1.19.1"
   },
   "dependencies": {
-    "axios": "^0.19.2",
     "dotenv": "^8.2.0",
     "handlebars": "^4.5.2",
+    "isomorphic-unfetch": "^3.1.0",
     "lodash": "^4.17.15",
     "rehype-parse": "^6.0.2",
     "rehype-remark": "^7.0.0",
