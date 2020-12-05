@@ -39,29 +39,61 @@ const run = async () => {
         ]
       : [];
 
-    const content = attr("content:encoded");
-    const strippedContent = content.replace(/<!-{2}\s.+?-{2}>\n/gi, "");
-
-    if (isHTML(strippedContent)) {
-      payload.content = proMark(strippedContent);
-    } else {
-      payload.content = strippedContent;
-    }
-
-    payload.content = payload.content.replace("<br>", /\n\n/);
-    payload.content = payload.content.replace("<hr>", "***");
-    payload.content = payload.content.replace(/<\/?[a-z][\s\S]*>/gi, proMark);
+    payload.content = attr("content:encoded");
 
     console.log("======== PAYLOAD =========", payload);
 
+    // const mutation = `
+    //   mutation CreatePost(
+    //     $title: String!,
+    //     $slug: String!,
+    //     $date: Date!,
+    //     $content: RichTextAST!,
+    //     $categories: [String!]!,
+    //     $author: String!,
+    //   ) {
+    //     createPost(
+    //       data: {
+    //         title: $title,
+    //         slug: $slug,
+    //         date: $date,
+    //         content: {
+    //           children: [
+    //             {
+    //               type: "paragraph",
+    //               children: [
+    //                 {
+    //                   text: $content
+    //                 }
+    //               ]
+    //             }
+    //           ]
+    //         },
+    //         categories: $categories,
+    //         author: $author,
+    //       }
+    //     ) {
+    //       title
+    //       slug
+    //       date
+    //       content {
+    //         html
+    //         markdown
+    //         text
+    //         raw
+    //       }
+    //       categories
+    //       author
+    //     }
+    //   }
+    // `;
+
     const mutation = `
-      mutation CreatePost(
+      mutation MyDemoMutation(
         $title: String!, 
         $slug: String!, 
         $date: Date!, 
-        $content: RichTextAST!, 
-        $categories: [String!]!,
-        $author: String!,
+        $content: RichTextAST!
       ) {
         createPost(
           data: {
@@ -79,24 +111,20 @@ const run = async () => {
                   ]
                 }
               ]
-            }, 
-            categories: $categories,
-            author: $author,
+            }
           }
         ) {
           title
           slug
           date
           content {
-            html
-            markdown
-            text
             raw
+            html
+            text
+            markdown
           }
-          categories
-          author
         }
-      }    
+      }
     `;
 
     fetch(`${process.env.API_ID}`, {
@@ -112,8 +140,8 @@ const run = async () => {
           slug: payload.slug,
           date: payload.date,
           content: payload.content,
-          categories: payload.categories,
-          author: payload.author,
+          // categories: payload.categories,
+          // author: payload.author,
         },
       }),
     })
